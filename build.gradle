@@ -1,0 +1,41 @@
+
+group = 'org.xbib.gradle.plugin'
+version = '1.0.1'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+configurations {
+  wagon
+}
+
+dependencies {
+  compile gradleApi()
+  compile "org.xbib:jacc:1.0.0.Beta7"
+  testCompile 'junit:junit:4.11'
+  wagon 'org.apache.maven.wagon:wagon-ssh-external:2.6'
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      configuration = configurations.wagon
+      repository (
+              id: 'xbib.org',
+              url: uri('scpexe://xbib.org/repository'),
+              authentication: [ userName: xbibUsername, privateKey: xbibPrivateKey]
+      )
+    }
+  }
+}
