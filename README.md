@@ -1,4 +1,4 @@
-# gradle-plugin-jflex
+# gradle-plugin-jacc
 
 A Gradle plugin for [Jacc](http://web.cecs.pdx.edu/~mpj/jacc/)
 
@@ -27,7 +27,7 @@ Gradle will look for your Jacc files in `src/main/jacc/*.jacc`.
 
 # License
 
-Copyright (C) 2014 Jörg Prante
+Copyright (C) 2015 Jörg Prante
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
