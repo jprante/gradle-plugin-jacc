@@ -2,6 +2,12 @@
 
 A Gradle plugin for [Jacc](http://web.cecs.pdx.edu/~mpj/jacc/)
 
+# Versions
+
+1.0.3 - for Gradle < 2.12
+
+1.0.4 - for Gradle >= 2.12
+
 ## Usage
 
     apply plugin: 'java'
@@ -15,12 +21,12 @@ A Gradle plugin for [Jacc](http://web.cecs.pdx.edu/~mpj/jacc/)
             }
         }
         dependencies {
-            classpath 'org.xbib.gradle.plugins:gradle-plugin-jacc:1.0.0'
+            classpath 'org.xbib.gradle.plugins:gradle-plugin-jacc:1.0.4'
         }
     }
 
     dependencies {
-        jacc 'org.xbib:jacc:1.0.0.Beta7'
+        jacc 'org.xbib:jacc:2.0.0-SNAPSHOT'
     }
 
 Gradle will look for your Jacc files in `src/main/jacc/*.jacc`.

@@ -4,6 +4,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.internal.file.FileResolver;
+import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.internal.tasks.DefaultSourceSet;
 import org.gradle.api.plugins.JavaPlugin;
@@ -16,9 +17,12 @@ public class JaccPlugin implements Plugin<Project> {
 
     private final FileResolver fileResolver;
 
+    private final DirectoryFileTreeFactory directoryFileTreeFactory;
+
     @Inject
-    public JaccPlugin(final FileResolver fileResolver) {
+    public JaccPlugin(final FileResolver fileResolver, DirectoryFileTreeFactory directoryFileTreeFactory) {
         this.fileResolver = fileResolver;
+        this.directoryFileTreeFactory = directoryFileTreeFactory;
     }
 
     @Override
@@ -39,7 +43,8 @@ public class JaccPlugin implements Plugin<Project> {
                 .getPlugin(JavaPluginConvention.class).getSourceSets()
                 .all(sourceSet -> {
                     JaccVirtualSourceDirectoryImpl jaccSourceSet =
-                            new JaccVirtualSourceDirectoryImpl(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
+                            new JaccVirtualSourceDirectoryImpl(((DefaultSourceSet) sourceSet).getDisplayName(),
+                                    fileResolver, directoryFileTreeFactory);
                     new DslObject(sourceSet).getConvention().getPlugins().put("jacc", jaccSourceSet);
                     String srcDir = String.format("src/%s/jacc", sourceSet.getName());
                     jaccSourceSet.getJacc().srcDir(srcDir);
