@@ -12,7 +12,7 @@ A Gradle plugin for [Jacc](http://web.cecs.pdx.edu/~mpj/jacc/)
             }
         }
         dependencies {
-            classpath 'org.xbib.gradle.plugins:gradle-plugin-jacc:1.1.0'
+            classpath 'org.xbib.gradle.plugins:gradle-plugin-jacc:1.1.1'
         }
     }
 
