@@ -1,12 +1,12 @@
 package org.xbib.gradle.task
 
-import jacc.CommandLine
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.xbib.jacc.Jacc
 
 class JaccTask extends DefaultTask {
 
@@ -30,9 +30,9 @@ class JaccTask extends DefaultTask {
             if (file.isDirectory()) {
                 return
             }
-            CommandLine.main([file.file.absolutePath,
-                              '-d',
-                              project.file("$generateDir/${file.relativePath.parent}").absolutePath + '/'] as String[])
+            Jacc.main([file.file.absolutePath,
+                       '-d',
+                       project.file("$generateDir/${file.relativePath.parent}").absolutePath + '/'] as String[])
         }
     }
 }

@@ -1,15 +1,12 @@
+plugins {
+  id "com.gradle.plugin-publish" version "0.9.4"
+}
 
 group = 'org.xbib.gradle.plugin'
-version = '1.1.1'
+version = '1.1.2'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
-
-buildscript {
-  repositories {
-    jcenter()
-  }
-}
 
 repositories {
   mavenLocal()
@@ -37,6 +34,19 @@ uploadArchives {
                 authentication: [userName: xbibUsername, privateKey: xbibPrivateKey]
         )
       }
+    }
+  }
+}
+
+pluginBundle {
+  website = 'https://github.com/jprante/gradle-plugin-jacc/'
+  vcsUrl = 'https://github.com/jprante/gradle-plugin-jacc/'
+  description = 'Gradle plugin for jacc parser generator'
+  tags = ['parser generator', 'jacc']
+  plugins {
+    jaccPlugin {
+      id = 'org.xbib.gradle.plugin.jacc'
+      displayName = 'Gradle plugin for jacc'
     }
   }
 }
