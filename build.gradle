@@ -1,6 +1,23 @@
-plugins {
-  id "com.gradle.plugin-publish" version "0.9.4"
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:${rootProject.property('gradle.publish.plugin.version')}"
+    }
 }
+
+plugins {
+    id 'java-gradle-plugin'
+}
+
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: "com.gradle.plugin-publish"
 
 ext {
     user = 'xbib'
@@ -11,17 +28,24 @@ ext {
     scmDeveloperConnection = 'scm:git:git://github.com/' + user + '/' + name + '.git'
 }
 
-group = 'org.xbib.gradle.plugin'
-version = '1.1.3'
+gradlePlugin {
+    plugins {
+        jaccPlugin {
+            id = 'org.xbib.gradle.plugin.jacc'
+            implementationClass = 'org.xbib.gradle.plugin.JaccPlugin'
+        }
+    }
+}
 
-apply plugin: 'groovy'
-apply plugin: 'maven'
-apply plugin: 'signing'
-apply plugin: "com.gradle.plugin-publish"
+wrapper {
+    gradleVersion = "${project.property('gradle.wrapper.version')}"
+    distributionType = Wrapper.DistributionType.ALL
+}
 
 repositories {
-  mavenLocal()
-  mavenCentral()
+    mavenLocal()
+    mavenCentral()
+    jcenter()
 }
 
 configurations {
@@ -29,29 +53,56 @@ configurations {
 }
 
 dependencies {
-  compile gradleApi()
-  compile 'org.xbib:jacc:2.1.0'
-  wagon 'org.apache.maven.wagon:wagon-ssh-external:2.10'
+    implementation gradleApi()
+    implementation "org.xbib:jacc:${project.property('jacc.version')}"
+    testImplementation gradleTestKit()
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.property('junit.version')}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.property('junit.version')}"
+    testImplementation "org.apache.logging.log4j:log4j-core:${project.property('log4j.version')}"
+    wagon "org.apache.maven.wagon:wagon-ssh:${project.property('wagon.version')}"
 }
 
-task javadocJar(type: Jar, dependsOn: classes) {
-  from javadoc
-  classifier 'javadoc'
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-  from sourceSets.main.allSource
-  classifier 'sources'
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-artifacts {
-  archives javadocJar, sourcesJar
+test {
+    useJUnitPlatform()
+    failFast = true
+    testLogging {
+        showStandardStreams = true
+        events 'STARTED', 'PASSED', 'FAILED', 'SKIPPED'
+    }
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            println "\nTest result: ${result.resultType}"
+            println "Test summary: ${result.testCount} tests, " +
+                    "${result.successfulTestCount} succeeded, " +
+                    "${result.failedTestCount} failed, " +
+                    "${result.skippedTestCount} skipped"
+        }
+    }
 }
 
-if (project.hasProperty('signing.keyId')) {
-  signing {
-    sign configurations.archives
-  }
+if (project.hasProperty('gradle.publish.key')) {
+    pluginBundle {
+        website = scmUrl
+        vcsUrl = scmUrl
+        plugins {
+            jaccPlugin {
+                id = 'org.xbib.gradle.plugin.jacc'
+                description = pluginDescription
+                displayName = 'Gradle Jacc plugin'
+                tags = ['jacc']
+                version = project.version
+            }
+        }
+    }
 }
-
-apply from: 'gradle/publish.gradle'
